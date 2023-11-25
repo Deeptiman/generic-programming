@@ -1,19 +1,5 @@
 package main
 
-import (
-	"context"
-)
-
-type LoginFn[P AuthParameter, R AuthClaimResponse] func(context.Context, P) (R, error)
-
-type AuthParameter interface {
-	Employee | Admin | Customer
-}
-
-type AuthClaimResponse interface {
-	*GeneralClaimResponse | *AdminClaimResponse
-}
-
 type Occupation int
 
 const (

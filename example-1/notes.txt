@@ -1,0 +1,21 @@
+## Golang Generic
+
+// https://go.dev/play/p/d277nCZRUX5
+
+- Golang releases generic programming with a specific goal for developers to write common set of types
+to utilize as types parameters for functions and type struct. The syntax to write generic type comes
+with a `func F[T any] (p T){ ... }` that can be use to declare common types and the function arguments 
+will use the set of types as parameters. Also, types can have type parameters list `type O[T any] struct`. 
+We'll see the more examples on syntax of generic structure in the course of this article.
+
+Why Generic types in Golang is so important?
+- 
+
+to introduce common set of types that developers
+can utilize to write singular reusable code.
+
+to define a set of types with type parameters and type inference.
+The 
+
+with type parameters for functions and interface types. 
+The generic structure defines the types  

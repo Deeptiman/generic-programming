@@ -113,29 +113,3 @@ var adminLoginFn = func(ctx context.Context, admin Admin) (*AdminClaimResponse, 
 		Active:     a.Active,
 	}, nil
 }
-
-func authMiddleware[P AuthParameter, R AuthClaimResponse](
-	ctx context.Context, loginFn LoginFn[P, R],
-	authReq P,
-) (R, error) {
-	var retry = 5
-	return loginWithRetry(ctx, retry, loginFn, authReq)
-}
-
-func loginWithRetry[P AuthParameter, R AuthClaimResponse](
-	ctx context.Context,
-	retry int,
-	loginFn LoginFn[P, R], authReq P) (R, error) {
-	resp, err := loginFn(ctx, authReq)
-	if err != nil {
-		if retry--; retry >= 0 {
-			return loginWithRetry(ctx, retry, loginFn, authReq)
-		}
-
-		return nil, err
-	}
-
-	fmt.Println("login successful ")
-
-	return resp, nil
-}
