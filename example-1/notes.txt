@@ -88,100 +88,16 @@ func (c *Customer) Login(id, passwd string) error {
 }
 ````````
 
-As we can see the implementation both `Employee` & `Customer` type have their own way of writing the internal
-code for `Login` function. This is the benefit of using interface to add abstraction layer of types to implement
-multiple usecase in a Go application.
+In the example, the `Login` function usecase is written differently for `Employee` & `Customer` type. 
+The code structure shows by applying interface segregation principle each type can isolate the usecase
+in the function. 
+
 
 // https://go.dev/play/p/DvJt4-rnTN5
 
-Complete code:
+Complete code can be found at Github
 
-``````````go
-package main
 
-import (
-    "fmt"
-)
-
-type Auth interface {
-    Login(id, passwd string) error
-}
-
-type Employee struct {}
-
-func newEmployee() Auth {
-    return &Employee{}
-}
-
-func employeeLogin(id, passwd string) error {
-    // do employee login with the proper auth mechanism.
-    return nil
-}
-
-func (e *Employee) Login(id, passwd string) error {
-    fmt.Println("Employee login")
-
-    if employeeLogin(id, passwd) != nil {
-        return fmt.Errorf("employee login failed, id=%s", id)
-    }
-
-    return nil
-}
-
-type Customer struct {}
-
-func newCustomer() Auth {
-    return &Customer{}
-}
-
-func isLicenseEnabled(id string) bool {
-    // complete code is not neccessary
-    return true
-}
-
-func customerLogin(id, passwd string) error {
-    // do customer login with the proper auth mechanism.
-    return nil
-}
-
-func (c *Customer) Login(id, passwd string) error {
-    fmt.Println("Customer login")
-
-    if isLicenseEnabled(id) {
-        return nil
-    }
-
-    return fmt.Errorf("customer license is not enabled, id=%s", id)
-}
-
-func main() {
-    id := "cust_123"
-    pwd := "cust_pwd123"
-    c := newCustomer()
-
-    err := c.Login(id, pwd)
-    if err != nil {
-        panic(err)
-    }
-
-    id = "emp_123"
-    pwd = "emp_pwd123"
-    e := newEmployee()
-    err = e.Login(id, pwd)
-    if err != nil {
-        panic(err)
-    }
-}
-
-`````````
-
-In this example, the interface type `Auth` is typed with `Employee` & `Customer` struct type. And both
-structs can define the `Login` method to work separately on the usecase. This design defines the SOLID
-principle to write better maintainable code. The "Login" function 
-
-// interface segregation principle ...
-
-/// SOLID principle ....
 
 Example: Let's try to design a Login middleware that'll be accessed by multiple models. 
 
