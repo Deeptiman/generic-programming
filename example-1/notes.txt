@@ -9,7 +9,120 @@ will use the set of types as parameters. Also, types can have type parameters li
 We'll see the more examples on syntax of generic structure in the course of this article.
 
 Why Generic types in Golang is so important?
-- 
+- Golang is known to have simplistic code structure than other programming languages. The code syntax, type
+structure allows developers to write clean code to improve readability. Golang modular code writing depends
+on the developer how to structure functions and type to be reusuable by other package modules. To achive generic
+code templating in Golang, it's essential to have generic type syntax to write effective functions to be use by
+common type sets. The generic code structure improves the design thinking to write arbitary functions for a
+critical implementation to create common package module. Also, before jumping towards the generic design developers
+must understand the SOLID design principle. It encourages to arrange the GO programs to achive a single purpose design 
+with the package modules to work together.
+
+SOLID principle design with interface
+
+interface represents any types in Go. It's best to define an interface with funcion signature that any type can implement
+as abstraction to the package module. interface provides segregation design principles that each type take advantage of the
+method signature to write the underlying function implementation based on the type.
+
+Example:
+
+Let's take an example of simple Login package design. There are two users type logins { Employee, Customer } to the
+Go applications and each type will do the login differently than the other. As first approach let's design the interface
+with the Login method signature.
+
+`````````go
+type Auth interface {
+    Login(id, passwd string) error
+}
+`````````
+
+Auth interface defines a simple Login method with `id`, `passwd` parameters. 
+
+// https://go.dev/play/p/DvJt4-rnTN5
+
+``````````go
+package main
+
+import (
+    "fmt"
+)
+
+type Auth interface {
+    Login(id, passwd string) error
+}
+
+type Employee struct {}
+
+func newEmployee() Auth {
+    return &Employee{}
+}
+func (e *Employee) Login(id, passwd string) error {
+    fmt.Println("Employee login")
+    return nil
+}
+
+type Customer struct {}
+
+func newCustomer() Auth {
+    return &Customer{}
+}
+func (c *Customer) Login(id, passwd string) error {
+    fmt.Println("Customer login")
+    return nil
+}
+
+func main() {
+    id := "u123"
+    pwd := "pwd123"
+    c := newCustomer()
+
+    err := c.Login(id, pwd)
+    if err != nil {
+        panic(err)
+    }
+}
+
+`````````
+
+In this example, the interface type `Auth` is typed with `Employee` & `Customer` struct type. And both
+structs can define the `Login` method to work separately on the usecase. This design defines the SOLID
+principle to write better maintainable code. The "Login" function 
+
+// interface segregation principle ...
+
+/// SOLID principle ....
+
+Example: Let's try to design a Login middleware that'll be accessed by multiple models. 
+
+Employee model
+
+<< Employee structure >>
+
+Customer model
+
+<< Customer structure >>
+
+Admin model
+
+<< Admin structure >>
+
+If we take closer look every model is embedded with AuthReq structure to validate the existence of records
+in db and authenticate the actor within the cluster. We can create a `Type sets` using an interface to combine
+all these model into one generic type. 
+
+````````````````````````go
+type AuthParameter interface {
+	Employee | Admin | Customer
+}
+````````````````````````
+
+The `AuthParameter` interface designs a type sets [P AuthParameter] with [Employee, Admin, Customer] models. 
+This means the declaration [P AuthParameter] will be use in any method signatures. 
+
+
+
+
+
 
 to introduce common set of types that developers
 can utilize to write singular reusable code.
