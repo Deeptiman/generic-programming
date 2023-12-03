@@ -46,7 +46,7 @@ func newEmployee() Auth {
     return &Employee{}
 }
 
-func employeeLogin(id, passwd string) error {
+func (e *Employee) employeeLogin(id, passwd string) error {
     // do employee login with the proper auth mechanism.
     return nil
 }
@@ -54,7 +54,7 @@ func employeeLogin(id, passwd string) error {
 func (e *Employee) Login(id, passwd string) error {
     fmt.Println("Employee login")
 
-    if employeeLogin(id, passwd) != nil {
+    if e.employeeLogin(id, passwd) != nil {
         return fmt.Errorf("employee login failed, id=%s", id)
     }
 
@@ -72,13 +72,17 @@ func isLicenseEnabled(id string) bool {
     return true
 }
 
-func customerLogin(id, passwd string) error {
+func (c *Customer) customerLogin(id, passwd string) error {
     // do customer login with the proper auth mechanism.
     return nil
 }
 
 func (c *Customer) Login(id, passwd string) error {
     fmt.Println("Customer login")
+
+    if c.customerLogin(id, passwd) != nil {
+        return fmt.Errorf("customer login failed, id=%s", id)
+    }
 
     if isLicenseEnabled(id) {
         return nil
@@ -89,8 +93,11 @@ func (c *Customer) Login(id, passwd string) error {
 ````````
 
 In the example, the `Login` function usecase is written differently for `Employee` & `Customer` type. 
-The code structure shows by applying interface segregation principle each type can isolate the usecase
-in the function. 
+The code structure shows by applying interface segregation principle each type can isolate the function 
+usecase. The `Auth` interface defines single responsibility design by providing single method signature.
+This common interface pattern used widely in Go programs for better maintainablity and reusability of the
+package module and have strict correlation among types to utilize the methods signatures and parameters.
+The interface in Go implicit to `any` type to allow to convert the object into a concrete type. 
 
 
 // https://go.dev/play/p/DvJt4-rnTN5
