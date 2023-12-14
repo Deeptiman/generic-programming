@@ -96,10 +96,14 @@ In the example, the `Login` function usecase is written differently for `Employe
 The code structure shows by applying interface segregation principle each type can isolate the function 
 usecase. The `Auth` interface defines single responsibility design by providing single method signature.
 This common interface pattern used widely in Go programs for better maintainability and reusability of the
-package module and have strict correlation among types to utilize the methods signatures and parameters.
-The interface in Go implicit to `any` type to allow to convert the object into a concrete type. But it 
-doesn't create contraint type to restrict the any other type to access the method signature. What it means
-is before release Go generic interface is kind of universal model to all the types. And 
+package module and have strict correlation among types to utilize the methods signatures and parameters. But
+what if we have an usecase to restrict the `Login` function to only few types [Employee, Customer] and the
+caller MUST pass the parameters with the defined types then `interface` will not be right approach to the problem.
+We will dive similar kind of problem in the course of this article and how Golang generic will the righ way to
+to the design implementation. 
+
+
+Generic Design
 
 
 
