@@ -121,7 +121,24 @@ Let's see different Generic design component with examples.
 
 Type sets
 
-In generic programming, the function parameters and arguments are instantiated as singular type to satisfy one common usecase. 
+In generic programming, the function parameters and arguments are instantiated as singular type to satisfy one common usecase. In Go 1.18+ the interface design allows
+to form a set of unions with non-interface type and will be allowed as function argument and type parameter than any other types.
+
+
+Let's example of the Login function and refactor with Generic Type sets.
+
+Before Generic:
+
+   func(Employee) Login(id, passwd string) error { return nil }
+   func(Customer) Login(id, passwd string) error { return nil }
+
+As we have seen the Login method declared in `Auth` interface that invoke by non-interface type `Employee` & `Customer` but signature of method quite general for both the
+type to follow. There could be a possibility that certain type may have different type parameters for the usecase and with the current implementation it's impossible to
+achive multi-set type parameter for the request/response arguments.
+
+After Generic:
+    
+
 
 
 constraint provides an union of types that are intended for one common usecase. 
