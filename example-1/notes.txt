@@ -92,6 +92,19 @@ func (c *Customer) Login(id, passwd string) error {
 }
 ````````
 
+
+<< diagram >>
+
+``````
+
+ type Auth interface {
+    Login(id, passwd string) error
+ }    
+
+ func (Employee) Login(id, passwd string) {}
+ func (Customer) Login(id, passwd string) {}
+
+
 In the example, the `Login` function usecase is written differently for `Employee` & `Customer` type. 
 The code structure shows by applying interface segregation principle each type can isolate the function 
 usecase. The `Auth` interface defines single responsibility design by providing single method signature.
@@ -99,13 +112,27 @@ This common interface pattern used widely in Go programs for better maintainabil
 package module and have strict correlation among types to utilize the methods signatures and parameters. But
 what if we have an usecase to restrict the `Login` function to only few types [Employee, Customer] and the
 caller MUST pass the parameters with the defined types then `interface` will not be right approach to the problem.
-We will dive similar kind of problem in the course of this article and how Golang generic will the righ way to
-to the design implementation. 
+We will dive into similar kind of problem in the course of this article and how Golang generic will the right way to the design implementation.
 
 
 Generic Design
 
+Let's see different Generic design component with examples. 
 
+Type sets
+
+In generic programming, the function parameters and arguments are instantiated as singular type to satisfy one common usecase. 
+
+
+constraint provides an union of types that are intended for one common usecase. 
+The interface type is permitted to only certain concrete type to access the generic function.
+
+For example:
+
+In previous example, the `Login` method define with a common 
+
+As we have seen in previous example on the SOLID design with interface segregation that using `interface` any
+concrete type can invoke the function. 
 
 
 // https://go.dev/play/p/DvJt4-rnTN5
