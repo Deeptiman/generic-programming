@@ -154,6 +154,100 @@ Let's example of the Login function and refactor with Generic Type sets.
   The new type parameter `AuthClaimResponse` in the modified function signature will work as a return type argument. Again, non-interface type can be
   anything to specify with the type parameter to apply to the use case.
 
+  `````````
+  type AuthClaimResponse interface {
+  	*GeneralClaimResponse | *AdminClaimResponse
+  }
+  `````````
+
+ `````````````````````
+  type GeneralClaimResponse struct {
+  	Id         string
+  	Token      string
+  	License    string
+  	MemberType MemberType
+  	*ErrorResponse
+  }
+
+  type AdminClaimResponse struct {
+  	Id         string
+  	Token      string
+  	ACL        ACL
+  	MemberType MemberType
+  	Active     bool
+  	*ErrorResponse
+  }
+  ``````````````````
+
+    Now, let's look at the refactored `Login` function with generic programming and the problem we solve with the previous design.
+
+    In the first code snippet for the `Employee` type, the `Login` set the type-parameter for the return arguments with `GeneralClaimResponse` and the implementation
+    of the `employeeLoginFn` remains internal to the type and can process the inputs to return the required `GeneralClaimResponse` to the caller.
+
+    `````````````````````
+    req := Employee{AuthReq: AuthReq{Id: id, Password: password}}
+    loginFn := Login[Employee, *GeneralClaimResponse](employeeLoginFn)
+    employeeLoginFn := func(ctx context.Context, emp Employee) (*GeneralClaimResponse, error) {
+        // TODO: do something with the function inputs
+        return &GeneralClaimResponse{}, nil
+    }
+    `````````````````````
+
+    For another concrete type, `Admin,` the type-parameter is declared with `AdminClaimResponse` to be used as the return value for the Login function. And for
+    `adminLoginFn` function implementation remains independent of the other types.
+
+    `````````````````````
+    req := Admin{AuthReq: AuthReq{Id: id, Password: password}}
+    loginFn := Login[Admin, *AdminClaimResponse](adminLoginFn)
+    adminLoginFn := func(ctx context.Context, admin Admin) (*AdminClaimResponse, error) {
+        // TODO: do something with the function inputs
+        return &AdminClaimResponse{}, nil
+    }
+    `````````````````````
+
+    Both types have their own `Login` function definition, and we need middleware to process them individually without additional value manipulation with type inputs.
+
+    // Login function pass to the middleware
+    resp, err := authMiddleware(ctx, loginFn, req)
+
+    func authMiddleware[P AuthParameter, R AuthClaimResponse](
+    	ctx context.Context,
+    	loginFn Login[P, R], authReq P) (R, error) {
+    	var retry = 5
+    	return loginWithRetry(ctx, retry, loginFn, authReq)
+    }
+
+    func loginWithRetry[P AuthParameter, R AuthClaimResponse](
+    	ctx context.Context,
+    	retry int,
+    	loginFn Login[P, R], authReq P) (R, error) {
+    	resp, err := loginFn(ctx, authReq)
+    	if err != nil {
+    		if retry--; retry >= 0 {
+    			return loginWithRetry(ctx, retry, loginFn, authReq)
+    		}
+
+    		return nil, err
+    	}
+
+    	fmt.Println("login successful ")
+
+    	return resp, nil
+    }
+
+    We see a retry mechanism inside the middleware applied to the `Login` function. As the function definition is passed from the caller with the
+    proper type arguments, the function can be retried by comparing each attempt with the error value. This is the least we can do for the `Login` function
+    in the middleware; otherwise, the generic design doesn't yet support accessing field items of the `type` declared in the type argument.
+
+    What problem did we solve with the Generic `Login` function design?
+    - As we can see, the refactored `Login` function has type parameters with any concrete types, and each of them can define the implementation with their required
+    type and prepare different outputs for the return arguments.
+    - The generic retry component in the middleware allows the design to add a common retriable mechanism for the `Login` function.
+    - The generic type parameters will allow adding any other concrete type to the design without intervening with core structural design changes.
+
+ Constraints
+
+
 
 ==========
 
