@@ -247,6 +247,53 @@ Let's example of the Login function and refactor with Generic Type sets.
 
  Constraints
 
+  The type-parameter design adds a union of type sets to define an abstract data type, but we can't really know what types are involved in the set and how
+  they operate to perform specific tasks. What if There is a requirement to write an arbitrary function to compare the type elements? It's essential to know the
+  supported flavors of the types. Although the goal is to achieve a generic template to hide the type's behaviors, in some cases, it's good to use predictive type
+  sets to add computational flexibility to the generic function. This is where Golang constraint design comes with defined type parameters to perform computation
+  with Go operators.
+
+  For example:
+
+   package main
+
+   import (
+   	"fmt"
+   	"golang.org/x/exp/constraints"
+   )
+
+   func main() {
+   	sum1 := computeSum([]int{1, 2, 3, 4, 5})
+   	fmt.Println("sum of integers = ", sum1)
+
+   	sum2 := computeSum([]uint32{11, 21, 34, 41, 56})
+   	fmt.Println("sum of unsigned integers = ", sum2)
+
+   	result := compareFloats([]float64{1.5, 3.2, 4.7, 5.2, 8.9, 7.1, 6.3})
+   	fmt.Println("float values greater than 5.0 = ", result)
+   }
+
+   func computeSum[P constraints.Integer](p []P) P {
+   	var s P
+   	for _, t := range p {
+   		s += t
+   	}
+   	return s
+   }
+
+   func compareFloats[P constraints.Float](p []P) []P {
+   	e := make([]P, 0, len(p))
+   	for _, t := range p {
+   		if t >= 5.0 {
+   			e = append(e, t)
+   		}
+   	}
+   	return e
+   }
+
+   In the example above, we imported the constraint package that provides known primitive data types declared as type parameters and that we can use to apply
+   operators to perform math comparisons with the types. The constraint package allows flexibility to be compatible with the operators as the type elements are known.
+
 
 
 ==========
