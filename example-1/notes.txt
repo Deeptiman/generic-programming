@@ -2,33 +2,35 @@
 
 // https://go.dev/play/p/d277nCZRUX5
 
-- Golang releases generic programming with a specific goal for developers to write common set of types
-to utilize as types parameters for functions and type struct. The syntax to write generic type comes
-with a `func F[T any] (p T){ ... }` that can be use to declare common types and the function arguments 
-will use the set of types as parameters. Also, types can have type parameters list `type O[T any] struct`. 
-We'll see the more examples on syntax of generic structure in the course of this article.
+- Golang released generic programming with a specific goal for developers to write a standard set of types
+  to utilize as type parameters for functions and type structs. The syntax to write generic type comes
+  with a `func F[T any] (p T){ ... }` that can be used to declare common types, and the function arguments
+  will use the set of types as parameters. Also, types can have type parameters list `type O[T any] struct.`
+  We'll see more examples of the syntax of generic structure in the course of this article.
+
 
 Why Generic types in Golang is so important?
-- Golang is known to have simplistic code structure than other programming languages. The code syntax, type
-structure allows developers to write clean code to improve readability. Golang modular code writing depends
-on the developer how to structure functions and type to be reusuable by other package modules. To achive generic
-code templating in Golang, it's essential to have generic type syntax to write effective functions to be use by
-common type sets. The generic code structure improves the design thinking to write arbitary functions for a
-critical implementation to create common package module. Also, before jumping towards the generic design developers
-must understand the SOLID design principle. It encourages to arrange the GO programs to achive a single purpose design 
-with the package modules to work together.
+- Golang is known to have a more simplistic code structure than other programming languages. The code syntax and type structure
+allow developers to write clean code to improve readability. Golang modular code writing depends on the developer's structure of
+functions and types to be reusable by other package modules. To achieve generic code templating in Golang, it's essential to have
+generic type syntax to write effective functions to be used by common type sets. The generic code structure improves the design thinking
+to write arbitrary functions for a critical implementation to create a common package module. Also, developers must understand the SOLID design
+principle before jumping toward the generic design. It encourages arranging the GO programs to achieve a single-purpose design with the package
+modules to work together.
+
 
 SOLID principle design with interface
 
-interface represents any types in Go. It's best to define an interface with funcion signature that any type can implement
-as abstraction to the package module. interface provides segregation design principles that each type take advantage of the
-method signature to write the underlying function implementation based on the type.
+Interface represents any type in Go. It's best to define an interface with a function signature that any type can implement as an abstraction
+to the package module. The interface provides segregation design principles that each type takes advantage of the method signature to write the
+underlying function implementation based on the type.
+
 
 Example:
 
-Let's take an example of simple Login package design. There are two users type logins { Employee, Customer } to the
-Go applications and each type will do the login differently than the other. As first approach let's design the interface
-with the Login method signature.
+Let's take an example of a simple Login package design. There are two user type logins { Employee, Customer }, to the Go applications, and
+each type will do the login differently than the other. As the first approach, let's design the interface with the Login method signature.
+
 
 `````````go
 type Auth interface {
@@ -36,8 +38,9 @@ type Auth interface {
 }
 `````````
 
-Auth interface defines a simple Login method with `id`, `passwd` parameters and return error. And 
-`Employee` & `Customer` type can utilize `Auth` interface to write the implementation for Login.
+The Auth interface defines a simple Login method with `id` and `password` parameters and returns an error. The `Employee` and `Customer`
+types can utilize the `Auth` interface to write the implementation for Login.
+
 
 ````````go
 type Employee struct {}
@@ -68,7 +71,7 @@ func newCustomer() Auth {
 }
 
 func isLicenseEnabled(id string) bool {
-    // complete code is not neccessary
+    // complete code is not necessary
     return true
 }
 
@@ -105,26 +108,31 @@ func (c *Customer) Login(id, passwd string) error {
  func (Customer) Login(id, passwd string) {}
 
 
-In the example, the `Login` function usecase is written differently for `Employee` & `Customer` type. 
-The code structure shows by applying interface segregation principle each type can isolate the function 
-usecase. The `Auth` interface defines single responsibility design by providing single method signature.
-This common interface pattern used widely in Go programs for better maintainability and reusability of the
-package module and have strict correlation among types to utilize the methods signatures and parameters. But
-what if we have an usecase to restrict the `Login` function to only few types [Employee, Customer] and the
-caller MUST pass the parameters with the defined types then `interface` will not be right approach to the problem.
-We will dive into similar kind of problem in the course of this article and how Golang generic will the right way to the design implementation.
+In the example, the `Login` function use case is written differently for the `Employee` and `Customer` types.
+The code structure shows by applying the interface segregation principle, each type can isolate the function
+use case.
+
+The `Auth` interface defines a single responsibility design by providing a single method signature. This common interface pattern is used widely in Go programs
+for better maintainability and reusability of the package module and has a strict correlation among types to utilize the signatures and parameters of the methods.
+But what if we have a use case to restrict the `Login` function to only a few types [Employee, Customer], and the caller MUST pass the parameters with the defined types?
+Then, `interface` will not be the right approach to the problem.
+
+We will dive into a similar kind of problem in the course of this article and how Golang generic will be the right way to implement the design.
+
 
 Generic Design
 
-In generic programming, the function parameters and arguments are instantiated as singular type to satisfy one common usecase. In Go 1.18+ the interface design allows
-to form a set of unions with non-interface type and will be allowed as type parameters to be used as function argument as any other types.
+The function parameters and arguments are instantiated in generic programming as a singular type to satisfy one common use case.
+In Go 1.18+, the interface design allows the forming of a set of unions with non-interface types. It will be permitted as type parameters
+to be used as function arguments as any other type.
 
 Let's example of the Login function and refactor with Generic Type sets.
 
    func(Employee) Login(id, passwd string) error { return nil }
    func(Customer) Login(id, passwd string) error { return nil }
 
-  As we have two types to write as abstract data types, so a new interface type we can define to unionize the non-interface types.
+  We have two types to write as abstract data types, so we can define a new interface type to unionize the non-interface types.
+
 
    type AuthParameter interface {
    	    Employee | Customer | Admin // Added additional Admin struct type to explain better on the design
@@ -135,14 +143,20 @@ Let's example of the Login function and refactor with Generic Type sets.
 
   type Login[P AuthParameter] func(ctx context.Context, p P) error
 
-  The `Login` function creates a generic function signature with `AuthParameter` as type-parameter and that used as type argument P. Also, we can add as many type parameters
-  to define an effective function signature. Let's try adding one more type parameter that'll work as return value for the function.
+  The `Login` function creates a generic function signature with `AuthParameter` as a type-parameter used as type argument P. Also, we can add as many
+  type parameters to define an effective function signature as possible.
+
+  Let's try adding one more type parameter that'll work as a return value for the function.
+
 
   type Login[P AuthParameter, T AuthClaimResponse] func(ctx context.Context, p P) (T, error)
 
-  In the modified function signature, new type parameter `AuthClaimResponse` will work as return type argument. And again non-interface type can anything to specify with the
-  type parameter to be applicable with the usecase.
-  
+  The new type parameter `AuthClaimResponse` in the modified function signature will work as a return type argument. Again, non-interface type can be
+  anything to specify with the type parameter to apply to the use case.
+
+
+==========
+
 
 
 constraint provides an union of types that are intended for one common usecase. 
