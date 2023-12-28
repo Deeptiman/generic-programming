@@ -294,6 +294,48 @@ Let's example of the Login function and refactor with Generic Type sets.
    In the example above, we imported the constraint package that provides known primitive data types declared as type parameters and that we can use to apply
    operators to perform math comparisons with the types. The constraint package allows flexibility to be compatible with the operators as the type elements are known.
 
+   Also, we can define our constraint type parameters to perform a specific operation in the generic function. Let's take a simple use case to convert an array of
+   strings to lowercase. In usual type-parameter declarations, we never know whether the type T is a string, and it's impossible to do the conversion. To overcome the
+   design restriction, we can write an interface type `StringCases` to define the "ToLower() string" method signature, and then any concrete type can utilize the
+   interface function internally to do string conversion. In the generic function, we can use the `StringCases` interface type as a type parameter to allow the type
+   arguments to call the "ToLower()" function.
+
+   package main
+
+   import (
+      "fmt"
+      "strings"
+   )
+
+   func main() {
+        str := ToLower([]res{{"ABC"}, {"DEF"}, {"PQR"}, {"XYZ"}})
+        fmt.Println("convert string to lowercase = ", str)
+   }
+
+   type StringCases interface {
+   	ToLower() string
+   	ToUpper() string
+   }
+
+   type res struct {
+   	x string
+   }
+
+   func (p res) ToLower() string {
+   	return strings.ToLower(p.x)
+   }
+
+   func (p res) ToUpper() string {
+   	return strings.ToUpper(p.x)
+   }
+
+   func ToLower[T StringCases](s []T) (ret []string) {
+   	for _, v := range s {
+   		ret = append(ret, v.ToLower())
+   	}
+   	return ret
+   }
+
 
 ==========
 
