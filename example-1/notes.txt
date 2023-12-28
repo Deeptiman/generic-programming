@@ -295,65 +295,6 @@ Let's example of the Login function and refactor with Generic Type sets.
    operators to perform math comparisons with the types. The constraint package allows flexibility to be compatible with the operators as the type elements are known.
 
 
-
 ==========
 
-
-
-constraint provides an union of types that are intended for one common usecase. 
-The interface type is permitted to only certain concrete type to access the generic function.
-
-For example:
-
-In previous example, the `Login` method define with a common 
-
-As we have seen in previous example on the SOLID design with interface segregation that using `interface` any
-concrete type can invoke the function. 
-
-
 // https://go.dev/play/p/DvJt4-rnTN5
-
-Complete code can be found at Github
-
-
-
-Example: Let's try to design a Login middleware that'll be accessed by multiple models. 
-
-Employee model
-
-<< Employee structure >>
-
-Customer model
-
-<< Customer structure >>
-
-Admin model
-
-<< Admin structure >>
-
-If we take closer look every model is embedded with AuthReq structure to validate the existence of records
-in db and authenticate the actor within the cluster. We can create a `Type sets` using an interface to combine
-all these model into one generic type. 
-
-````````````````````````go
-type AuthParameter interface {
-	Employee | Admin | Customer
-}
-````````````````````````
-
-The `AuthParameter` interface designs a type sets [P AuthParameter] with [Employee, Admin, Customer] models. 
-This means the declaration [P AuthParameter] will be use in any method signatures. 
-
-
-
-
-
-
-to introduce common set of types that developers
-can utilize to write singular reusable code.
-
-to define a set of types with type parameters and type inference.
-The 
-
-with type parameters for functions and interface types. 
-The generic structure defines the types  
