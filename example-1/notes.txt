@@ -371,7 +371,7 @@ Let's example of the Login function and refactor with Generic Type sets.
     }
 
     In the above example, the `Integer` type parameters have a set of `int` types with ~sign to specify that all the type arguments for `toNumber()` MUST pass the
-    `int` type values to compute the result successfully. Also, we can see another type declaration, `Number,` uses the type cast technique to pass the int value,
+    `int` type values to compute the result successfully. Also, we can see another type definition `Number` uses the type cast technique to pass the int value,
     which is perfectly fine as the ~sign allows the type to be compatible with the required type.
 
     But if we remove the ~sign from the `int` type, then the `Number` type will not be supported because then the compiler stops checking for the additional type
