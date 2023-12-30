@@ -473,6 +473,19 @@ Let's example of the Login function and refactor with Generic Type sets.
         }
 
 
+   Conclusion
+
+    The article highlighted most of the features outlined in the Go generic design. The constraints type inference is the major key component of the Go generic that
+    keeps the generic function more abstract and readable. I have also summarized the issues and missing features with the current design elements that still need to
+    evolve, considering all the aspects of generic, which are supported by languages like C++ and Java. The built-in packages require a generic version to provide more
+    standard library functions for programmers to call from the application rather than implementing on their own from the application package module. The constraints
+    package is limited to some primitive types and needs to be upgraded with more underlying type support. Many other design ideas and issues are discussed in detail
+    in the proposal doc, which I didn't cover, but feel free to read it.
+
+   Also, I have committed a generic example module in my GitHub; please feel free to clone and execute it on your machine.
+
+
+
 ==========
 
 // https://go.dev/play/p/DvJt4-rnTN5
