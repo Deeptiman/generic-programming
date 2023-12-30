@@ -79,4 +79,3 @@ type AdminClaimResponse struct {
 	Active     bool
 	*ErrorResponse
 }
-

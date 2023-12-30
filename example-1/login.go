@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -40,8 +41,8 @@ func doLogin(ctx context.Context, id, password string) error {
 
 		// TODO: do something with authenticated Admin response
 		fmt.Println("Admin Authenticated: ID=", resp.Id, ", ACL=", resp.ACL, ", Active=", resp.Active, ", Token=", resp.Token)
-	case None:
-		panic("unsupported request type")
+	default:
+		return errors.New("unsupported request type")
 	}
 
 	return nil
