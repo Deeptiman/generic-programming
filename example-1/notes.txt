@@ -429,6 +429,49 @@ Let's example of the Login function and refactor with Generic Type sets.
     Error: Number does not satisfy Integer (possibly missing ~ for int in Integer)
 
 
+    Summary:
+
+    - To prepare this article, I thoroughly researched the Google Go generic proposal on type parameters. The docs provide a wide variety of syntax to write type
+    parameters and function arguments in Go generic code for faster readability. There will be many use cases to write common generic functions utilized by many types,
+    and extending the module to any future type means including the new type to the type set. To highlight one use case with concurrency and generic code structure to
+    write a worker pool that can facilitate the type parameter and run the worker function with the function type arguments. The significance of a generic worker pool
+    is that only code one module requires tuning for optimization and performance and extending to any future type will support the underlying type set.
+
+
+    - The requirement of generic design MUST be minimal in any application package module because if programmers try to implement generic types for most functions,
+    there is compilation cost that, for each underlying type in type-sets, the compiler validates the function inline separately.
+
+
+    - The generic doesn't support identifying the underlying types with a type switch. If there is a constraint type ~T and underlying types int, string, it's impossible to know
+      the type of T that is currently involved in the generic function.
+
+    type T interface { ~int | ~string }
+
+    func matchType[P T](x P) {
+        switch x.(type) { // cannot use type switch on type parameter value x (variable of type P constrained by T)
+            case int:
+            case string:
+        }
+    }
+
+    The generic function panics because the type argument x is actually constrained with type T. But if we make an adjustment with x by doing type conversion with an
+    empty interface, then the compiler understands the type argument as `any` type to choose the matching case.
+
+     func matchType[P T](x P) {
+        switch (interface{{})(x).(type) { // VALID
+            case int:
+            case string:
+        }
+     }
+
+    - We can't do the conversion from one type parameter to another, so even if both type parameters relate to the same underlying type, the comparison is still impossible
+    to know if the types are identical.
+
+        func someFunc[T1, T2 any](x T1, y T2) {
+            T1(y) // incompatible
+            p := (interface{})(y).(T1) // VALID
+        }
+
 
 ==========
 
