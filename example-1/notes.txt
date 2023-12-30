@@ -336,10 +336,55 @@ Let's example of the Login function and refactor with Generic Type sets.
    	return ret
    }
 
-   What does ~ sign means to the type-parameters declaration?
+ Type inference
 
-   - The type arguments MUST satisfy the underlying types defined in the type parameters, and in some instances, the type arguments must pass only the allowed types.
-   So, Go generic provides ~ sign syntax to the type-parameter to add some validation against the `A,` which only supports type T, P, or E.
+  Type inference is a technique to deduce the number of expressions in a function type argument by declaring structural type or structural constraints as type parameters.
+
+  Let's take an example with structural type parameter to infer type argument. The list of `Employee` structural types declared with constraints type inference to omit the type argument for each type.
+
+
+  func GetEmployeeRecord[P ~[]E, E Employee](p P, i int) Employee { ... }
+
+  list := []Employee{{Id: 1, Salary: 10000}, {Id: 2, Salary: 25000}, {Id: 3, Salary: 48000}}
+  GetEmployeeRecord(list, 1)
+
+  In the function call, the list value is passed as a type argument, and the `[]Employee` type is identical to type parameter P because the underlying type is valid
+  with the type `Employee.`
+
+  The tilde ~ symbol negates any other type than type E --> Employee. In this function, type inference is archived with constraints type inference technique.
+  We could define a structural constraint type P by doing the inference with structural type parameter E in the type parameter.
+
+
+  Also, we could do the constraint type inference with another type defined in the type parameter whose underlying type is the same type.
+
+  type Organization interface {
+      Employee | Customer
+  }
+
+  func GetEmployeeRecord[P ~[]E, E Organization](p P, i int) Employee { ... }
+
+  In this example, the type parameter E underlying type is Employee, which is valid for declaring the constraint type inference P as another type parameter and
+  will match with the function type arguments.
+
+  Without type inference?
+
+  If we don't use type inference, we need to define an explicit type argument for each type parameter. The generic function writing becomes repetitive in specifying
+  the same type expression for each type parameter.
+
+  func GetEmployeeRecord[P []Employee, E Employee](p P, i int) Employee { ... }
+
+  type records []Employee
+  list := []Employee{{Id: 1, Salary: 10000}, {Id: 2, Salary: 25000}, {Id: 3, Salary: 48000}}
+  GetEmployeeRecord[records, Employee](list, 1)
+
+  The benefit of type inference in generic function writing is more of a clean code structure for better readability. It doesn't add code efficiency but improves the
+  grammar of generic code syntax.
+
+
+ What does tilde ~ symbol means to the type-parameters declaration?
+
+   - The type arguments MUST satisfy the underlying types defined in the type parameters, and in some instances, the type arguments must pass only the permitted types.
+   So, Go generic provides ~ symbol syntax to the type-parameter to add some validation against the `A,` which only supports type T, P, or E.
 
 
    type A interface {
@@ -375,13 +420,15 @@ Let's example of the Login function and refactor with Generic Type sets.
     which is perfectly fine as the ~sign allows the type to be compatible with the required type.
 
     But if we remove the ~sign from the `int` type, then the `Number` type will not be supported because then the compiler stops checking for the additional type
-    validation that the type is actually an int type.
+    association that the type is actually an int type.
 
     type Integer interface {
          int | ~int8 | ~int16
     }
 
     Error: Number does not satisfy Integer (possibly missing ~ for int in Integer)
+
+
 
 ==========
 
